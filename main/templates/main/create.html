@@ -4,14 +4,13 @@
 	Create Form
 {% endblock %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
 	<h3>Create Form</h3>
 	<form method='post' action='/createForm/' class='form-group'>
 		{% csrf_token %}
-		<div class='input-group mb-3'>
-			<div class='input-group-prepend'>
-				<button type='submit', name='save' class='btn btn-success'>Create New Form</button>
-			</div>
-			{{form.name}}
-		</div>
+		{{ form|crispy }}
+		<button type='submit', name='save' class='btn btn-success'>Create New Form</button>
+	</form>
 {% endblock %}

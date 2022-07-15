@@ -39,9 +39,15 @@
 	<body>
 		<div class='sidenav'>
 			<a href='/'>Home</a>
+			<a href='/accessForms/'>Access Form</a>
 			<a href='/createForm/'>Create Form</a>
 			<a href='/api/'>API</a>
 			<a href='/admin/'>Admin Pannel</a>
+			{% if user.is_authenticated %}
+				<a href='/logout/'>Logout</a>
+			{% else %}
+				<a href='/login/'>Login</a>
+			{% endif %}
 		</div>
 
 		<div id='content', name='content', class='main'>

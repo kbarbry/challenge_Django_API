@@ -2,6 +2,10 @@
 
 ## Commands to start
 
+Dependecies:</br>
+
+pip install django-crispy-forms</br>
+
 django-admin startproject \<nameProject\> *create a new project*</br>
 python3 manage.py runserver 8000 *run the server in 127.0.0.1/8000*</br>
 python3 manage.py startapp \<nameApp\></br>

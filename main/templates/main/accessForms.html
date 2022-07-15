@@ -1,0 +1,15 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+	Access Form
+{% endblock %}
+
+{% block content %}
+	<h3>Access Form</h3>
+</br>
+	{% for form in forms %}
+		<div>
+			<a href='/{{form.id}}'> {{form.name}} </a></br>
+		</div>
+	{% endfor %}
+{% endblock %}

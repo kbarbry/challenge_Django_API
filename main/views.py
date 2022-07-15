@@ -29,15 +29,20 @@ def mainPageDetails(request, id):
 
 def createForm(request):
 	if request.method == 'POST':
-		form = CreateForm(request.POST)
+		formAuth = CreateForm(request.POST)
 		
-		if form.is_valid():
-			n = form.cleaned_data['name']
-			d = form.cleaned_data['description']
-			c = form.cleaned_data['check']
+		if formAuth.is_valid():
+			forms = Form.objects.all()
+			n = formAuth.cleaned_data['name']
+			d = formAuth.cleaned_data['description']
 			t = Form(name=n, description=d)
 			t.save()
+			return render(request, 'main/accessForms.html', {'forms':forms})
 
 	else:
-		form = CreateForm()
-	return render(request, 'main/create.html', {'form':form})
+		formAuth = CreateForm()
+	return render(request, 'main/create.html', {'form':formAuth})
+
+def accessForms(request):
+	forms = Form.objects.all()
+	return render(request, 'main/accessForms.html', {'forms':forms})
