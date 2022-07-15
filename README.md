@@ -15,7 +15,7 @@ python3 manage.py startapp \<nameApp\></br>
 ## When you want to config your app
 
 adding a function with a render in your nameApp.views</br>
-```
+```python
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -24,7 +24,7 @@ def mainPage(response):
 ```
 
 adding a urls.py file to the nameApp folder</br>
-```
+```python
 from django.urls import path
 from . import views
 
@@ -35,7 +35,7 @@ urlpatterns = [
 </br>
 
 edit nameProject.urls to add a url for the new app</br>
-```
+```python
 path('', include('nameApp.urls'))
 ```
 </br>
@@ -43,7 +43,7 @@ path('', include('nameApp.urls'))
 ## Adding models
 
 on your appName folder there is a models.py you can add models for your DB, here Item is part of a Form</br>
-```
+```python
 from django.db import models
 
 class Form(models.Model0):
@@ -85,7 +85,7 @@ form.item_set.all() OR form.item_set.get(id=1)</br>
 Simply create a new app called API with 2 specificity</br>
 We will be using the rest_framework of django</br>
 We first need to have something that convert our class in json format: a serializer</br>
-```
+```python
 from main.models import Form
 from rest_framework import serializers
 
@@ -106,7 +106,7 @@ An URL can be called with those request, for instance, if we call http:.../api/f
 that probably mean you want to access data with this address, if you call the SAME url with a DELETE request</br>
 that probably mean you want to delete a form.</br>
 So we need to do different things on our functions depending on the request, this is waht we get:</br>
-```
+```python
 @api_view(['GET', 'POST'])
 def homeForm(request):
 	if request.method == 'GET':
@@ -151,3 +151,131 @@ What does that mean ? Like classes on OOP, we can create objects, that can be ca
 pages, to avoid code duplication, we can have variable and that kind of stuff in it to have dynamic</br>
 templates we will see how good that is.</br></br>
 The synthax is kinda weird but we will have a lot of {% xxx %} tags</br>
+To begin with, we have to create on our appName folder a templates folder</br>
+In this folder we HAVE TO create another folder which has the same name of our appName</br>
+and we will put on it a base.html file</br>
+This file exist to give a model of how each page of our site should look like, a structure of it</br>
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<style type='text/css'>
+			...css code...
+		</style>
+
+		...include bootstrap if you want...
+		
+		<title>{% block title %}Djungo challenge{% endblock %}</title>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	</head>
+	<body>
+		<div class='sidenav'>
+			<a href='/'>Home</a>
+			<a href='/accessForms/'>Access Form</a>
+			<a href='/createForm/'>Create Form</a>
+			<a href='/api/'>API</a>
+			<a href='/admin/'>Admin Pannel</a>
+			{% if user.is_authenticated %}
+				<a href='/logout/'>Logout</a>
+			{% else %}
+				<a href='/login/'>Login</a>
+			{% endif %}
+		</div>
+
+		<div id='content', name='content', class='main'>
+			<div class='row justify-content-center'>
+				<div class='col-8'>
+					<h1 class='mt-2'>QuickForm Website</h1>
+					<hr class='mt-0 mb-4'>
+					{% block content %}
+					{% endblock %}
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+```
+This look like a classic html page however, we have some weird stuff in it</br>
+There is a {% block title %} a {% block content %} or even a {% if user.is_authenticated %}</br>
+This is exactly what make templates dynamicly filled. That mean that in every html file we will</br>
+just have to include this template file, and everything on this page will be copied. After this we need to</br>
+fill those 2 content and title block with the data we ant, and it's done!</br>
+This is how a html file with this template include should look like:</br>
+```html
+{% extends 'appName/base.html' %}
+
+{% block title %}
+	Access Form
+{% endblock %}
+
+{% block content %}
+	<h3>Access Form</h3>
+	</br>
+	{% for form in forms %}
+		<div>
+			<a href='/{{form.id}}'> {{form.name}} </a></br>
+		</div>
+	{% endfor %}
+{% endblock %}
+```
+We can see the extends statement which allows us to include the template file</br>
+After this we just have to put content between the block tags and the text will be displayed</br>
+If you look closely, you'll see some '{{form.name}}' element for exemple</br>
+This is simply because we can give variable to our html file to make things dynamic</br>
+How to give variable to our file ?</br>
+```python
+def accessForms(request):
+	forms = Form.objects.all()
+	return render(request, 'main/accessForms.html', {'forms':forms})
+```
+Like we can see here we can give dictionary in parameter of the render function inside our views.py</br></br>
+Last but not list, with those {% ... %} tags, we can write python code in our html page</br>
+that mean we can use if, else, for or any other python statement</br>
+
+## Authentication protocol
+
+Because we want this website to be a lil bit secured and 'user friendly' we will</br>
+create really simple authenticate system</br>
+Lucky us, if django is famous, is because it has some module which allow us to do that easier</br>
+Django even give us the form for authentication so we don't have to do it by ourself</br>
+In order to use them, we just have to import the component, 
+```python
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+
+def register(request):
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+		if form.is_valid():
+			form.save()
+		return redirect('/login/')
+	else:
+		form = UserCreationForm()
+	return render(request, 'register/register.html', {'form':form})
+```
+We can now register, but we still have an issue, DJango gives us html page to login, logout... etc</br>
+However, they don't already exists</br>
+We have to create in our templates folder a registration folder and in it create a login.html file</br>
+which will be recognized by Django</br>
+```html
+{% extends 'main/base.html' %}
+
+{% block title %}
+	Login on QuickForm
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+	<form method='POST' class='form-group'>
+		{% csrf_token %}
+		{{ form|crispy }}
+		<button type='submit' class='btn btn-success'>Login</button>
+		<p>Don't have an account? Create one <a href='/register'>here</a></p>
+	</form>
+{% endblock %}
+```
+Here we're using the crispy framework, which is a Django framework to make better looking forms</br>
+There is also the use of bootstrap framework on our html files</br>
