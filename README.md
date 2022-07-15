@@ -2,7 +2,7 @@
 
 ## Commands to start
 
-Dependecies:</br>
+Depedencies:</br>
 sudo apt install python3 python3-pip ipython3</br>
 pip install django</br>
 pip install djangorestframework</br>
