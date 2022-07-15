@@ -1,14 +1,14 @@
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
 
 from main.models import Form, Item, People
 from .serializers import FormSerializer, ItemSerializer, PeopleSerializer
 
 # Home page
 def homePage(request):
-	return HttpResponse("<h1>Form, Item and People classes are accessible by the API</h1> for exemple http://127.0.0.1:8000/api/form/")
+	return render(request, 'api/home.html', {})
 
 # Form class
 @api_view(['GET', 'POST'])
