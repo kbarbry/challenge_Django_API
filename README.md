@@ -3,7 +3,9 @@
 ## Commands to start
 
 Dependecies:</br>
-
+sudo apt install python3 python3-pip ipython3</br>
+pip install django</br>
+pip install djangorestframework</br>
 pip install django-crispy-forms</br>
 
 django-admin startproject \<nameProject\> *create a new project*</br>
